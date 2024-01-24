@@ -13,6 +13,7 @@
 <body>
     <div class="container">
         <div class="row justify-content-center">
+            
             <div class="col-md-10 mt-5">
                 <div class="card">
                     <div class="card-header bg-primary text-white text-center">
@@ -20,6 +21,19 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
+                            @if (Route::has('login'))
+\
+                                @auth
+                                    <a href="{{ url('/dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
+                                @else
+                                    <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
+            
+                                    @if (Route::has('register'))
+                                        <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
+                                    @endif
+                                @endauth
+                           
+                        @endif
                             <a href="{{ route('create.student') }}" class="btn btn-success">Tambah Mahasiswa</a>
                         </div>
                         @if(count($students) > 0)
