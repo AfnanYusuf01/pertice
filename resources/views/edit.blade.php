@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Formulir Pembaruan Data Mahasiswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Tambahkan stylesheet kustom Anda di sini jika diperlukan -->
+  
 </head>
 
 <body>
@@ -42,6 +42,11 @@
                                 <input type="text" name="jurusan" class="form-control" value="{{ $student->jurusan }}" required>
                             </div>
                             <div class="form-group">
+                                <label for="foto" class="form-label">Foto:</label>
+                                <input type="file" name="foto" class="form-control-file">
+                                <small class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah foto.</small>
+                            </div>                            
+                            <div class="form-group">
                                 <label for="alamat" class="form-label">Alamat:</label>
                                 <textarea name="alamat" class="form-control">{{ $student->alamat }}</textarea>
                             </div>
@@ -55,7 +60,6 @@
         </div>
     </div>
 
-    <!-- Sertakan script Anda di sini jika diperlukan -->
 
 </body>
 

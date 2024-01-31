@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use App\Models\Student;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -15,29 +16,33 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'nim' => 'required|size:8|unique:students',
-            'nama' => 'required|min:3|max:50',
+        // Validasi data yang diterima
+        $request->validate([
+            'nim' => 'required|string',
+            'nama' => 'required|string',
             'jenis_kelamin' => 'required|in:P,L',
-            'jurusan' => 'required',
-            'alamat' => 'nullable',
+            'jurusan' => 'required|in:TI,SI,MI,KA',
+            'alamat' => 'required|string',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi untuk gambar
         ]);
 
-        $mahasiswa = new Student([
-            'nim' => $validatedData['nim'],
-            'nama' => $validatedData['nama'],
-            'jenis_kelamin' => $validatedData['jenis_kelamin'],
-            'jurusan' => $validatedData['jurusan'],
-            'alamat' => $validatedData['alamat'],
+        // Simpan gambar yang diunggah
+        $fotoName = $request->foto->getClientOriginalName();
+        $request->foto->storeAs('public/foto-mahasiswa', $fotoName);
+
+        // Simpan data mahasiswa ke dalam database
+        Student::create([
+            'nim' => $request->nim,
+            'nama' => $request->nama,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'jurusan' => $request->jurusan,
+            'alamat' => $request->alamat,
+            'foto' => $fotoName, // Simpan nama file gambar
         ]);
 
-        $mahasiswa->save();
-
-        $request->session()->put('pesan', 'Penambahan data berhasil');
-
-        return redirect()->route('students.index');
+        // Redirect atau response sesuai kebutuhan aplikasi
+        return redirect()->back()->with('success', 'Data mahasiswa berhasil disimpan.');
     }
-
     public function edit(string $id)
     {
         $student = Student::findOrFail($id);
@@ -52,15 +57,16 @@ class StudentController extends Controller
             'jenis_kelamin' => 'required|in:P,L',
             'jurusan' => 'required',
             'alamat' => 'nullable',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi untuk gambar
         ]);
-
+    
         if ($validateData->fails()) {
             return redirect()->back()->withErrors($validateData)->withInput();
         }
-
+    
         // Temukan mahasiswa berdasarkan ID
         $mahasiswa = Student::findOrFail($id);
-
+    
         // Update data mahasiswa
         $mahasiswa->update([
             'nim' => $request->nim,
@@ -69,7 +75,23 @@ class StudentController extends Controller
             'jurusan' => $request->jurusan,
             'alamat' => $request->alamat,
         ]);
-
+    
+        // Jika ada gambar yang diunggah
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($mahasiswa->foto) {
+                Storage::delete('public/foto-mahasiswa/' . $mahasiswa->foto);
+            }
+    
+            // Simpan gambar yang diunggah
+            $fotoName = $request->foto->getClientOriginalName();
+            $request->foto->storeAs('public/foto-mahasiswa', $fotoName);
+    
+            // Update nama foto pada data mahasiswa
+            $mahasiswa->foto = $fotoName;
+            $mahasiswa->save();
+        }
+    
         // Redirect dengan pesan sukses
         return redirect()->route('students.index')->with('success', 'Data mahasiswa berhasil diperbarui');
     }
@@ -93,6 +115,12 @@ class StudentController extends Controller
     {
         $students = Student::all();
         return view('index', compact('students'));
+    }
+
+    public function detail($id)
+    {
+        $student = Student::find($id);
+        return view('detail', compact('student'));
     }
 
 }

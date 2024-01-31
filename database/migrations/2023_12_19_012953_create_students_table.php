@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nama');
             $table->char('jenis_kelamin',1);
             $table->string('jurusan');
+            $table->string('foto');
             $table->text('alamat')->nullable();
             $table->timestamps();
         });

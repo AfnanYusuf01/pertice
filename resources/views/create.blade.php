@@ -93,6 +93,13 @@
                                 @enderror
                             </div>
                             <div class="form-group">
+                                <label for="foto" class="form-label">Foto:</label>
+                                <input type="file" name="foto" class="form-control-file" accept="image/*">
+                                @error('foto')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>                            
+                            <div class="form-group">
                                 <label for="alamat" class="form-label">Alamat:</label>
                                 <textarea name="alamat" class="form-control"></textarea>
                                 @error('alamat')

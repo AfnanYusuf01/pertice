@@ -58,6 +58,7 @@
                                             <td>{{ $student->alamat }}</td>
                                             <td>
                                                 <a href="{{ route('edit', $student->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                                <a href="{{ route('detail', $student->id) }}" class="btn btn-primary btn-sm">detail</a>
                                                 <a href="{{ route('students.delete', $student->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
                                             </td>
                                         </tr>
